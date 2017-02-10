@@ -1,11 +1,19 @@
 package com.hmelizarraraz.colorpictures;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,5 +51,57 @@ public class MainActivity extends AppCompatActivity {
 
     public void showVideos(View view) {
         Toast.makeText(this, "Galeria videos", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Método para crear un archivo tipo jpg o mp4
+     * @param tipoMedio foto: Creara foto. video: Creara video
+     * @return
+     */
+    private Uri crearArchivoMedio(int tipoMedio) throws IOException {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String nombreArchivo;
+        File archivo;
+
+        if (tipoMedio == Constants.MEDIA_FOTO) {
+
+            nombreArchivo = "IMG_" + timeStamp + "_";
+
+            File directorioAlmacenamiento = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+            archivo = File.createTempFile(nombreArchivo, ".jpg", directorioAlmacenamiento);
+
+            Log.d("TAG", archivo.getAbsolutePath());
+
+            return Uri.fromFile(archivo);
+
+        } else if (tipoMedio == Constants.MEDIA_VIDEO){
+
+            nombreArchivo = "MOV_" + timeStamp + "_";
+
+            File directorioAlmacenamiento = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+
+            archivo = File.createTempFile(nombreArchivo, ".mp4", directorioAlmacenamiento);
+
+            Log.d("TAG", archivo.getAbsolutePath());
+
+            return Uri.fromFile(archivo);
+
+        } else {
+            return null;
+        }
+
+    }
+
+    private boolean almacenamientoExternoDisponible() {
+
+        String state = Environment.getExternalStorageState();
+
+        if (state.equals(Environment.MEDIA_MOUNTED)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
