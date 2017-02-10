@@ -9,7 +9,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0px"
         android:orientation="horizontal"
         android:layout_weight="1">
 
@@ -19,6 +19,7 @@
             android:src="@drawable/ic_photo_camera_black_48dp"
             android:layout_weight="1"
             android:scaleType="fitCenter"
+            android:contentDescription="@string/imagen_camara"
             />
 
         <ImageView
@@ -27,13 +28,14 @@
             android:src="@drawable/ic_videocam_black_48dp"
             android:layout_weight="1"
             android:scaleType="fitCenter"
+            android:contentDescription="@string/imagen_video"
             />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0px"
         android:orientation="horizontal"
         android:layout_weight="1">
 
@@ -43,6 +45,7 @@
             android:src="@drawable/ic_photo_library_black_48dp"
             android:layout_weight="1"
             android:scaleType="fitCenter"
+            android:contentDescription="@string/imagen_galeria_fotos"
             />
 
         <ImageView
@@ -51,11 +54,9 @@
             android:src="@drawable/ic_video_library_black_48dp"
             android:layout_weight="1"
             android:scaleType="fitCenter"
+            android:contentDescription="@string/imagen_galeria_videos"
             />
 
     </LinearLayout>
-
-
-
 
 </LinearLayout>
