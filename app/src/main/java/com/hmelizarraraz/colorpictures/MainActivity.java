@@ -1,6 +1,7 @@
 package com.hmelizarraraz.colorpictures;
 
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -16,6 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Uri mediaUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +38,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void takePhoto(View view) {
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, Constants.PETICION_FOTO);
+        try {
+            mediaUri = crearArchivoMedio(Constants.MEDIA_FOTO);
 
-
+            if (mediaUri == null) {
+                Toast.makeText(this, "Ocurrio un error!", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaUri);
+                startActivityForResult(intent, Constants.PETICION_FOTO);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void takeVideo(View view) {
@@ -56,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Método para crear un archivo tipo jpg o mp4
      * @param tipoMedio foto: Creara foto. video: Creara video
-     * @return
+     * @return archivo
+     * @throws IOException
      */
     private Uri crearArchivoMedio(int tipoMedio) throws IOException {
 
@@ -74,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d("TAG", archivo.getAbsolutePath());
 
+            MediaScannerConnection.scanFile(this, new String[] { archivo.getPath() }, new String[] { "image/jpeg", "video/mp4"}, null);
+
             return Uri.fromFile(archivo);
 
         } else if (tipoMedio == Constants.MEDIA_VIDEO){
@@ -85,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
             archivo = File.createTempFile(nombreArchivo, ".mp4", directorioAlmacenamiento);
 
             Log.d("TAG", archivo.getAbsolutePath());
+
+            MediaScannerConnection.scanFile(this, new String[] { archivo.getPath() }, new String[] { "image/jpeg", "video/mp4"}, null);
 
             return Uri.fromFile(archivo);
 
