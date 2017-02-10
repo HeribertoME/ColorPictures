@@ -14,4 +14,6 @@ public class Constants {
     public static final int MEDIA_FOTO = 5;
     public static final int MEDIA_VIDEO = 6;
 
+    public static final int MAX_DURATION = 15;
+
 }

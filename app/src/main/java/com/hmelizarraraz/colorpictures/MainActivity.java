@@ -37,6 +37,14 @@ public class MainActivity extends AppCompatActivity {
                 intent.setData(mediaUri);
                 startActivity(intent);
             }
+
+            if (requestCode == Constants.PETICION_VIDEO) {
+                // Reproducir video
+                Intent intent = new Intent(Intent.ACTION_VIEW, mediaUri);
+                intent.setDataAndType(mediaUri, "video/*");
+                startActivity(intent);
+            }
+
         } else {
             Toast.makeText(this, "Ocurrio un error! :(", Toast.LENGTH_SHORT).show();
         }
@@ -60,7 +68,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void takeVideo(View view) {
-        Toast.makeText(this, "Video", Toast.LENGTH_SHORT).show();
+
+        try {
+            mediaUri = crearArchivoMedio(Constants.MEDIA_VIDEO);
+
+            if (mediaUri == null) {
+                Toast.makeText(this, "Ocurrio un error!", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaUri);
+                intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, Constants.MAX_DURATION);
+                startActivityForResult(intent, Constants.PETICION_VIDEO);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void showPhotos(View view) {
