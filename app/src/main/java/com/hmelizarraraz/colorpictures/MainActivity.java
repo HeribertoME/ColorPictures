@@ -31,6 +31,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (resultCode == RESULT_OK) {
             // Manejar la información
+            if (requestCode == Constants.PETICION_FOTO) {
+                // Ver la foto
+                Intent intent = new Intent(this, ImageActivity.class);
+                intent.setData(mediaUri);
+                startActivity(intent);
+            }
         } else {
             Toast.makeText(this, "Ocurrio un error! :(", Toast.LENGTH_SHORT).show();
         }
@@ -68,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Método para crear un archivo tipo jpg o mp4
      * @param tipoMedio foto: Creara foto. video: Creara video
-     * @return archivo
+     * @return Uri
      * @throws IOException
      */
     private Uri crearArchivoMedio(int tipoMedio) throws IOException {
