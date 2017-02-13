@@ -66,36 +66,53 @@ public class MainActivity extends AppCompatActivity {
 
     public void takePhoto(View view) {
 
-        try {
-            mediaUri = crearArchivoMedio(Constants.MEDIA_FOTO);
-
-            if (mediaUri == null) {
-                Toast.makeText(this, "Ocurrio un error!", Toast.LENGTH_SHORT).show();
-            } else {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaUri);
-                startActivityForResult(intent, Constants.PETICION_FOTO);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        crearMedio(Constants.PETICION_FOTO);
     }
 
     public void takeVideo(View view) {
 
-        try {
-            mediaUri = crearArchivoMedio(Constants.MEDIA_VIDEO);
+        crearMedio(Constants.PETICION_VIDEO);
 
-            if (mediaUri == null) {
-                Toast.makeText(this, "Ocurrio un error!", Toast.LENGTH_SHORT).show();
-            } else {
-                Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaUri);
-                intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, Constants.MAX_DURATION);
-                startActivityForResult(intent, Constants.PETICION_VIDEO);
-            }
+    }
+
+    private void crearMedio(int tipoPeticion) {
+
+        try {
+
+            if (tipoPeticion == Constants.PETICION_FOTO)
+                mediaUri = crearArchivoMedio(Constants.MEDIA_FOTO);
+            else if (tipoPeticion == Constants.PETICION_VIDEO)
+                mediaUri = crearArchivoMedio(Constants.MEDIA_VIDEO);
+            else
+                throw new IllegalArgumentException();
+
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        if (mediaUri == null) {
+            Toast.makeText(this, "Hubo un problema al crear el medio", Toast.LENGTH_SHORT).show();
+        } else {
+            iniciarCamara(mediaUri, tipoPeticion);
+        }
+    }
+
+    private void iniciarCamara(Uri mediaUri, int tipoPeticion) {
+
+        Intent intent;
+
+        if (tipoPeticion == Constants.PETICION_VIDEO) {
+            intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaUri);
+            intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, Constants.MAX_DURATION);
+            startActivityForResult(intent, tipoPeticion);
+
+        } else if (tipoPeticion == Constants.PETICION_FOTO){
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaUri);
+            startActivityForResult(intent, tipoPeticion);
+        } else {
+            throw new IllegalArgumentException();
         }
 
     }
@@ -119,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
      * @throws IOException
      */
     private Uri crearArchivoMedio(int tipoMedio) throws IOException {
+
+        if (!almacenamientoExternoDisponible())
+            return null;
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String nombreArchivo;
