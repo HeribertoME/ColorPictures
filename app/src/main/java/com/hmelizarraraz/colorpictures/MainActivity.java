@@ -45,6 +45,20 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
 
+            if (requestCode == Constants.PETICION_GALERIA_FOTOS) {
+                // Mostrar la galeria de fotos
+                Intent intent = new Intent(this, ImageActivity.class);
+                intent.setData(data.getData());
+                startActivity(intent);
+            }
+
+            if (requestCode == Constants.PETICION_GALERIA_VIDEOS) {
+                // Mostrar  la galeria de videos
+                Intent intent = new Intent(this, VideoActivity.class);
+                intent.setData(data.getData());
+                startActivity(intent);
+            }
+
         } else {
             Toast.makeText(this, "Ocurrio un error! :(", Toast.LENGTH_SHORT).show();
         }
@@ -87,11 +101,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showPhotos(View view) {
-        Toast.makeText(this, "Galeria fotos", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, Constants.PETICION_GALERIA_FOTOS);
     }
 
     public void showVideos(View view) {
-        Toast.makeText(this, "Galeria videos", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("video/*");
+        startActivityForResult(intent, Constants.PETICION_GALERIA_VIDEOS);
     }
 
     /**
