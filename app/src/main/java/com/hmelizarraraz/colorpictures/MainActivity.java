@@ -1,8 +1,11 @@
 package com.hmelizarraraz.colorpictures;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +21,8 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String TAG = MainActivity.class.getSimpleName();
+    private static final int CAMERA_WRITE_PERMISSION = 11;
     private Uri mediaUri;
 
     @Override
@@ -66,7 +71,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void takePhoto(View view) {
 
-        crearMedio(Constants.PETICION_FOTO);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                // Se solicita el permiso
+                requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_WRITE_PERMISSION);
+
+            } else {
+
+                // No es necesario el permiso
+                crearMedio(Constants.PETICION_FOTO);
+
+            }
+
+        } else {
+            crearMedio(Constants.PETICION_FOTO);
+        }
+
     }
 
     public void takeVideo(View view) {
