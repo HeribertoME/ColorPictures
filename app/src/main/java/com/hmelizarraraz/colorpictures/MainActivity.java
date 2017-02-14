@@ -1,6 +1,7 @@
 package com.hmelizarraraz.colorpictures;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
@@ -8,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final int CAMERA_WRITE_PERMISSION = 11;
+    private static final int VIDEO_WRITE_PERMISSION = 12;
     private Uri mediaUri;
 
     @Override
@@ -75,8 +78,15 @@ public class MainActivity extends AppCompatActivity {
 
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-                // Se solicita el permiso
-                requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_WRITE_PERMISSION);
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                    mostarExplicacion(Constants.PETICION_FOTO);
+
+                } else {
+
+                    // Se solicita el permiso
+                    requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_WRITE_PERMISSION);
+                }
 
             } else {
 
@@ -89,6 +99,33 @@ public class MainActivity extends AppCompatActivity {
             crearMedio(Constants.PETICION_FOTO);
         }
 
+    }
+
+    private void mostarExplicacion(final int tipoPeticion) {
+
+        new AlertDialog.Builder(this)
+                .setTitle("Se necesita el permiso")
+                .setMessage("Se necesita el permiso para poder guardar las fotos y video")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Pedir permiso
+                        if (tipoPeticion == Constants.PETICION_FOTO){
+                            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, CAMERA_WRITE_PERMISSION);
+                        } else if (tipoPeticion == Constants.PETICION_VIDEO){
+                            requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, VIDEO_WRITE_PERMISSION);
+                        } else {
+                            throw new IllegalArgumentException();
+                        }
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(MainActivity.this, ":(", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .show();
     }
 
     public void takeVideo(View view) {
