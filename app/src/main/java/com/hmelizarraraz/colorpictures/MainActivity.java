@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -128,9 +129,55 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Se iniciara la camara de fotos
+            if (requestCode == CAMERA_WRITE_PERMISSION) {
+
+                crearMedio(Constants.PETICION_FOTO);
+
+            }
+
+            // Se iniciara la camara de videos
+            if (requestCode == VIDEO_WRITE_PERMISSION) {
+
+                crearMedio(Constants.PETICION_VIDEO);
+
+            }
+
+
+        }
+
+    }
+
     public void takeVideo(View view) {
 
-        crearMedio(Constants.PETICION_VIDEO);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+                if (shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                    mostarExplicacion(Constants.PETICION_VIDEO);
+
+                } else {
+
+                    // Se solicita el permiso
+                    requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, VIDEO_WRITE_PERMISSION);
+                }
+
+            } else {
+
+                // No es necesario el permiso
+                crearMedio(Constants.PETICION_VIDEO);
+
+            }
+
+        } else {
+            crearMedio(Constants.PETICION_VIDEO);
+        }
 
     }
 
